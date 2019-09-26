@@ -92,6 +92,19 @@ class Dotenv
     }
 
     /**
+     * Load only selected (whitelisted) variables.
+     *
+     * @param array $whitelist
+     *
+     * @return array
+     */
+    public function loadWhitelist($whitelist)
+    {
+        $this->loader = new Loader($this->filePath, true);
+        return $this->loader->loadWhitelist($whitelist);
+    }
+
+    /**
      * Required ensures that the specified variables exist, and returns a new validator object.
      *
      * @param string|string[] $variable

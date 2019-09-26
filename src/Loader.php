@@ -63,6 +63,27 @@ class Loader
     }
 
     /**
+     * Load only selected (whitelisted) variables.
+     *
+     * @param array $whitelist
+     * @return array
+     */
+    public function loadWhitelist($whitelist)
+    {
+        $this->ensureFileIsReadable();
+
+        $filePath = $this->filePath;
+        $lines = $this->readLinesFromFile($filePath);
+        foreach ($lines as $line) {
+            if (!$this->isComment($line) && $this->looksLikeSetter($line)) {
+                $this->setEnvironmentVariableIfWhitelisted($line, null, $whitelist);
+            }
+        }
+
+        return $lines;
+    }
+
+    /**
      * Ensures the given filePath is readable.
      *
      * @throws \Dotenv\Exception\InvalidPathException
@@ -328,6 +349,51 @@ class Loader
     public function setEnvironmentVariable($name, $value = null)
     {
         list($name, $value) = $this->normaliseEnvironmentVariable($name, $value);
+
+        // Don't overwrite existing environment variables if we're immutable
+        // Ruby's dotenv does this with `ENV[key] ||= value`.
+        if ($this->immutable && $this->getEnvironmentVariable($name) !== null) {
+            return;
+        }
+
+        // If PHP is running as an Apache module and an existing
+        // Apache environment variable exists, overwrite it
+        if (function_exists('apache_getenv') && function_exists('apache_setenv') && apache_getenv($name)) {
+            apache_setenv($name, $value);
+        }
+
+        if (function_exists('putenv')) {
+            putenv("$name=$value");
+        }
+
+        $_ENV[$name] = $value;
+        $_SERVER[$name] = $value;
+    }
+
+    /**
+     * Set an environment variable if whitelisted.
+     *
+     * This is done using:
+     * - putenv,
+     * - $_ENV,
+     * - $_SERVER.
+     *
+     * The environment variable value is stripped of single and double quotes.
+     *
+     * @param string      $name
+     * @param string|null $value
+     * @param array       $whitelist
+     *
+     * @return void
+     */
+    public function setEnvironmentVariableIfWhitelisted($name, $value = null, $whitelist)
+    {
+        list($name, $value) = $this->normaliseEnvironmentVariable($name, $value);
+
+        // Only load whitelisted variables.
+        if (!in_array($name, $whitelist)) {
+            return;
+        }
 
         // Don't overwrite existing environment variables if we're immutable
         // Ruby's dotenv does this with `ENV[key] ||= value`.
