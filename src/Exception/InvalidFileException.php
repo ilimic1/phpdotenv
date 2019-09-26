@@ -1,6 +1,6 @@
 <?php
 
-namespace Dotenv\Exception;
+namespace IlimicDotenv\Exception;
 
 use InvalidArgumentException;
 

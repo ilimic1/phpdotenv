@@ -1,6 +1,6 @@
 <?php
 
-use Dotenv\Dotenv;
+use IlimicDotenv\Dotenv;
 
 class DotenvTest extends PHPUnit_Framework_TestCase
 {

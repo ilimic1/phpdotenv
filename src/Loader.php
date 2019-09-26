@@ -1,9 +1,9 @@
 <?php
 
-namespace Dotenv;
+namespace IlimicDotenv;
 
-use Dotenv\Exception\InvalidFileException;
-use Dotenv\Exception\InvalidPathException;
+use IlimicDotenv\Exception\InvalidFileException;
+use IlimicDotenv\Exception\InvalidPathException;
 
 /**
  * This is the loaded class.

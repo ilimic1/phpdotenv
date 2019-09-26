@@ -1,9 +1,9 @@
 <?php
 
-namespace Dotenv;
+namespace IlimicDotenv;
 
-use Dotenv\Exception\InvalidCallbackException;
-use Dotenv\Exception\ValidationException;
+use IlimicDotenv\Exception\InvalidCallbackException;
+use IlimicDotenv\Exception\ValidationException;
 
 /**
  * This is the validator class.

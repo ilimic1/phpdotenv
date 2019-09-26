@@ -1,6 +1,6 @@
 <?php
 
-namespace Dotenv;
+namespace IlimicDotenv;
 
 /**
  * This is the dotenv class.
